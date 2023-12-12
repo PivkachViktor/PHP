@@ -120,6 +120,7 @@
       <excludeFolder url="file://$MODULE_DIR$/lab-3/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/lab-3/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/lab-3/vendor/webmozart/assert" />
+      <excludeFolder url="file://$MODULE_DIR$/lab-3/vendor/laravel/breeze" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
