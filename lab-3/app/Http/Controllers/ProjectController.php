@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Project;
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
+
 
 class ProjectController extends Controller
 {
@@ -28,29 +32,43 @@ class ProjectController extends Controller
     }
     public function create()
     {
+        $user = Auth::user();
         $this->debug_to_console("Create");
-        return view('projects.create');
+        if (Gate::forUser($user)->allows('create-project')) {
+            return view('projects.create');
+        } else {
+            abort(403);
+        }
     }
     public function store(Request $request)
     {
 
-        Project::create($request->all());
 
+        $user = Auth::user();
+        project::create(array_merge($request->all(), ['creator_user_id' => $user->id]));
         return redirect('/projects')->with('success', 'Project created successfully!');
     }
     public function show($id)
     {
+        $user = Auth::user();
         $this->debug_to_console("Show");
-        $project = Project::findOrFail($id);
-        return view('projects.show', ['project' => $project]);
-        //
+        $project = project::findOrFail($id);
+        if (Gate::forUser($user)->allows('show-project')) {
+            return view('projects.show',['project'=>$project]);
+        } else {
+            abort(403);
+        }
     }
     public function edit($id)
     {
-        $this->debug_to_console("Edit");
-        $project = Project::findOrFail($id);
-        return view('projects.edit', ['project' => $project]);
-        //
+        $user = Auth::user();
+
+        $project = project::findOrFail($id);
+        if (Gate::forUser($user)->allows('edit-project', $project)) {
+            return view('projects.edit', ['project' => $project]);
+        } else {
+            abort(403);
+        }
     }
     public function update(Request $request, $id)
     {
@@ -62,9 +80,15 @@ class ProjectController extends Controller
     }
     public function destroy($id)
     {
+        $user = Auth::user();
         $project = Project::findOrFail($id);
-        $project->delete();
-        return redirect('/projects')->with('success', 'Project deleted successfully!');
+        if(Gate::forUser($user)->allows('delete-project',$project)){
+            $project->delete();
+            return redirect('/projects')->with('success', 'Project deleted successfully!');
+        }else{
+            abort(403);
+        }
+
     }
 
 }
