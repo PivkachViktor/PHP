@@ -1,18 +1,13 @@
 <?php
 
+use App\Http\Controllers\ManufacturerController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
 Route::get('/', function () {
     return view('welcome');
+
 });
+Route::get('/manufacturers', [ManufacturerController::class, 'index']) -> name('index');
+Route::delete('/manufacturers/{id}', [ManufacturerController::class, 'destroy']) -> name('destroy');
+Route::get('/manufacturers/{id}/delete',[ManufacturerController::class,'showDeleteConfirmation' ] )-> name('confirm-delete');
