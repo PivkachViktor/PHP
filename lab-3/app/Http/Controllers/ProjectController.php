@@ -7,6 +7,8 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+
 
 
 class ProjectController extends Controller
@@ -40,14 +42,7 @@ class ProjectController extends Controller
             abort(403);
         }
     }
-    public function store(Request $request)
-    {
 
-
-        $user = Auth::user();
-        project::create(array_merge($request->all(), ['creator_user_id' => $user->id]));
-        return redirect('/projects')->with('success', 'Project created successfully!');
-    }
     public function show($id)
     {
         $user = Auth::user();
@@ -70,14 +65,7 @@ class ProjectController extends Controller
             abort(403);
         }
     }
-    public function update(Request $request, $id)
-    {
 
-        $project = Project::findOrFail($id);
-        $project->update($request->all());
-        return redirect('/projects/' . $project->id)->with('success', 'project updated successfully!');
-        //
-    }
     public function destroy($id)
     {
         $user = Auth::user();
@@ -89,6 +77,48 @@ class ProjectController extends Controller
             abort(403);
         }
 
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator([
+            'userName' => 'required|max:255',
+            'price' => 'required|numeric',
+            'mark_1' => 'required',
+            'mark_2' => 'required',
+            'mark_3' => 'required',
+        ]);
+
+        //if ($validator->fails()) {
+            //return redirect('/projects/create')
+                //->withErrors($validator)
+                //->withInput();
+        //}
+        $user = Auth::user();
+        project::create(array_merge($request->all(), ['creator_user_id' => $user->id]));
+        return redirect('/projects')->with('success', 'Project created successfully!');
+    }
+
+    public function update(Request $request, $id)
+    {
+
+
+        $validator = Validator([
+            'userName' => 'required|max:255',
+            'price' => 'required|numeric',
+            'mark_1' => 'required',
+            'mark_2' => 'required',
+            'mark_3' => 'required',
+        ]);
+
+        //if ($validator->fails()) {
+            //return redirect('/projects/' . $id . '/edit')
+                //->withErrors($validator)
+                //->withInput();
+        //}
+        $project = Project::findOrFail($id);
+        $project->update($request->all());
+        return redirect('/projects/' . $project->id)->with('success', 'project updated successfully!');
     }
 
 }
